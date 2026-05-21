@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip install *)",
+      "PowerShell(pip install *)",
+      "PowerShell(python -m pip install -r requirements.txt)",
+      "PowerShell(python create_specialists.py)",
+      "PowerShell(python create_coordinator.py)",
+      "PowerShell(python upload_skills.py)",
+      "PowerShell($env:PYTHONIOENCODING = \"utf-8\"; python upload_skills.py)",
+      "PowerShell($env:PYTHONIOENCODING = \"utf-8\"; python setup_environment.py)",
+      "PowerShell($env:PYTHONIOENCODING = \"utf-8\"; python run_deal_desk.py)",
+      "PowerShell($env:PYTHONIOENCODING = \"utf-8\"; python download_deliverable.py)",
+      "Bash(python *)",
+      "PowerShell($env:PYTHONIOENCODING = \"utf-8\"; python patch_agents.py)"
+    ]
+  }
+}

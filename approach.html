@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Building an APMP-Grade AI Bid Desk — The Specialist Swarm Pattern</title>
+<style>
+  :root {
+    --navy: #0f1f3d;
+    --navy-soft: #1a2d52;
+    --slate-900: #1f2937;
+    --slate-700: #374151;
+    --slate-500: #6b7280;
+    --slate-300: #d1d5db;
+    --slate-100: #f3f4f6;
+    --slate-50:  #f9fafb;
+    --amber: #c97c1c;
+    --amber-soft: #f4e4cc;
+    --teal: #0e7a6b;
+    --crimson: #a23838;
+    --paper: #fdfcf9;
+    --max: 880px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto,
+                 "Helvetica Neue", Arial, sans-serif;
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--slate-900);
+    background: var(--paper);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Hero */
+  header.hero {
+    background: linear-gradient(180deg, var(--navy) 0%, var(--navy-soft) 100%);
+    color: #fff;
+    padding: 64px 24px 56px;
+  }
+
+  header.hero .inner {
+    max-width: var(--max);
+    margin: 0 auto;
+  }
+
+  header.hero .eyebrow {
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    color: var(--amber-soft);
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  header.hero h1 {
+    font-size: 38px;
+    font-weight: 700;
+    line-height: 1.15;
+    margin: 0 0 16px;
+    letter-spacing: -0.01em;
+  }
+
+  header.hero .subtitle {
+    font-size: 20px;
+    color: #c8d3e8;
+    line-height: 1.5;
+    margin: 0 0 32px;
+    max-width: 660px;
+  }
+
+  header.hero .meta {
+    font-size: 13px;
+    color: #8fa1c2;
+    border-top: 1px solid rgba(255,255,255,0.12);
+    padding-top: 20px;
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  header.hero .meta span strong {
+    color: #fff;
+    font-weight: 600;
+  }
+
+  /* TL;DR card */
+  .tldr {
+    max-width: var(--max);
+    margin: -32px auto 0;
+    padding: 0 24px;
+    position: relative;
+    z-index: 2;
+  }
+  .tldr-card {
+    background: #fff;
+    border: 1px solid var(--slate-300);
+    border-radius: 8px;
+    padding: 28px 32px;
+    box-shadow: 0 6px 24px rgba(15, 31, 61, 0.06);
+  }
+  .tldr-card h2 {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--amber);
+    margin: 0 0 16px;
+    font-weight: 700;
+  }
+  .tldr-card ol {
+    margin: 0;
+    padding-left: 20px;
+    color: var(--slate-700);
+  }
+  .tldr-card ol li {
+    margin-bottom: 10px;
+  }
+  .tldr-card ol li:last-child { margin-bottom: 0; }
+
+  /* Body sections */
+  main {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 56px 24px 80px;
+  }
+
+  section { margin-bottom: 56px; }
+
+  h2.section-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+  }
+  h2.section-title .num {
+    color: var(--amber);
+    font-weight: 600;
+    margin-right: 10px;
+  }
+  .section-lede {
+    font-size: 17px;
+    color: var(--slate-500);
+    margin: 0 0 24px;
+  }
+
+  h3 {
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--slate-900);
+    margin: 32px 0 12px;
+  }
+
+  p { margin: 0 0 16px; }
+  p strong { color: var(--slate-900); }
+
+  /* Architecture diagram */
+  .arch {
+    background: var(--slate-50);
+    border: 1px solid var(--slate-300);
+    border-radius: 8px;
+    padding: 28px;
+    margin: 24px 0;
+  }
+  .arch .coord {
+    background: var(--navy);
+    color: #fff;
+    padding: 14px 20px;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: 600;
+    margin: 0 auto 8px;
+    max-width: 360px;
+    box-shadow: 0 2px 8px rgba(15,31,61,0.15);
+  }
+  .arch .coord small {
+    display: block;
+    font-weight: 400;
+    font-size: 12px;
+    opacity: 0.8;
+    margin-top: 4px;
+    color: #c8d3e8;
+  }
+  .arch .lines {
+    text-align: center;
+    color: var(--slate-300);
+    font-family: monospace;
+    line-height: 1;
+    font-size: 14px;
+    margin: 4px 0;
+  }
+  .arch .specialists {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .arch .spec {
+    background: #fff;
+    border: 1px solid var(--slate-300);
+    border-radius: 6px;
+    padding: 12px 10px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--slate-900);
+  }
+  .arch .spec small {
+    display: block;
+    font-weight: 400;
+    color: var(--amber);
+    font-size: 11px;
+    margin-top: 4px;
+    letter-spacing: 0.04em;
+  }
+  .arch .caption {
+    text-align: center;
+    font-size: 13px;
+    color: var(--slate-500);
+    margin-top: 20px;
+    font-style: italic;
+  }
+
+  @media (max-width: 600px) {
+    .arch .specialists { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* Pullquote */
+  .pull {
+    border-left: 3px solid var(--amber);
+    padding: 4px 0 4px 20px;
+    margin: 28px 0;
+    font-size: 19px;
+    line-height: 1.5;
+    color: var(--slate-700);
+    font-style: italic;
+  }
+  .pull cite {
+    display: block;
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--slate-500);
+    font-style: normal;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  /* Comparison table */
+  table.compare {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 24px 0;
+    font-size: 15px;
+  }
+  table.compare th, table.compare td {
+    text-align: left;
+    padding: 12px 14px;
+    vertical-align: top;
+    border-bottom: 1px solid var(--slate-300);
+  }
+  table.compare th {
+    background: var(--slate-50);
+    color: var(--navy);
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-bottom: 2px solid var(--slate-300);
+  }
+  table.compare td.label {
+    font-weight: 600;
+    color: var(--slate-900);
+    width: 30%;
+  }
+  table.compare td.v1 { color: var(--crimson); }
+  table.compare td.v2 { color: var(--teal); }
+
+  /* Code */
+  pre.snippet {
+    background: var(--navy);
+    color: #e8eef9;
+    padding: 20px 24px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    line-height: 1.55;
+    overflow-x: auto;
+    margin: 20px 0;
+    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  pre.snippet .accent { color: var(--amber-soft); font-weight: 600; }
+  pre.snippet .muted  { color: #8fa1c2; }
+  code.inline {
+    background: var(--slate-100);
+    color: var(--navy);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 13.5px;
+  }
+
+  /* Skill cards */
+  .skill-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 16px;
+  }
+  @media (max-width: 600px) {
+    .skill-grid { grid-template-columns: 1fr; }
+  }
+  .skill {
+    background: #fff;
+    border: 1px solid var(--slate-300);
+    border-left: 3px solid var(--amber);
+    padding: 16px 18px;
+    border-radius: 4px;
+  }
+  .skill h4 {
+    font-size: 15px;
+    margin: 0 0 6px;
+    color: var(--navy);
+    font-weight: 700;
+  }
+  .skill h4 .tag {
+    display: inline-block;
+    font-size: 10px;
+    background: var(--amber-soft);
+    color: var(--amber);
+    padding: 2px 7px;
+    border-radius: 3px;
+    margin-left: 8px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    vertical-align: middle;
+  }
+  .skill p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--slate-700);
+    line-height: 1.55;
+  }
+  .skill.new { border-left-color: var(--teal); }
+  .skill.new h4 .tag { background: #d1ece8; color: var(--teal); }
+
+  /* Sequence steps */
+  .steps {
+    counter-reset: step;
+    list-style: none;
+    padding-left: 0;
+    margin: 24px 0;
+  }
+  .steps li {
+    counter-increment: step;
+    position: relative;
+    padding: 14px 16px 14px 56px;
+    background: var(--slate-50);
+    margin-bottom: 8px;
+    border-radius: 4px;
+    border-left: 2px solid var(--navy);
+    font-size: 15.5px;
+    line-height: 1.55;
+  }
+  .steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: 16px;
+    top: 14px;
+    background: var(--navy);
+    color: #fff;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 26px;
+    font-weight: 700;
+    font-size: 13px;
+  }
+  .steps li strong { color: var(--navy); }
+
+  /* Footer */
+  footer {
+    background: var(--slate-50);
+    border-top: 1px solid var(--slate-300);
+    padding: 40px 24px;
+    text-align: center;
+    color: var(--slate-500);
+    font-size: 13px;
+  }
+  footer .footer-inner {
+    max-width: var(--max);
+    margin: 0 auto;
+  }
+  footer code {
+    background: #fff;
+    padding: 2px 6px;
+    border-radius: 3px;
+    color: var(--navy);
+    border: 1px solid var(--slate-300);
+  }
+
+  /* Inline labels */
+  .lbl-bad, .lbl-good {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 3px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .lbl-bad  { background: #fbeaea; color: var(--crimson); }
+  .lbl-good { background: #d1ece8; color: var(--teal); }
+
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="inner">
+    <div class="eyebrow">Specialist Swarm · Build Notes · Partner Basecamp 2026</div>
+    <h1>Building an APMP-Grade AI Bid Desk</h1>
+    <p class="subtitle">
+      How we turned a working multi-agent prototype into a system that
+      writes bid responses the way a qualified APMP capture lead would —
+      and why the first version, despite being fluent and well-structured,
+      was always going to lose the deal.
+    </p>
+    <div class="meta">
+      <span><strong>Stack:</strong> Claude Managed Agents · Custom Skills API</span>
+      <span><strong>Build time:</strong> ~60 min v1 · +3 hrs APMP uplift</span>
+      <span><strong>Scenario:</strong> Acme Corp RFP (synthetic)</span>
+    </div>
+  </div>
+</header>
+
+<div class="tldr">
+  <div class="tldr-card">
+    <h2>Headline</h2>
+    <ol>
+      <li><strong>The naive build worked.</strong> A coordinator agent plus four specialist sub-agents produced a complete, branded Word document in under two minutes. The pipeline was sound.</li>
+      <li><strong>The output was undifferentiated.</strong> Every claim was something a competitor could also make. The bid was a fact-dump, not an argument — and would not have won.</li>
+      <li><strong>The fix was structural, not editorial.</strong> We layered APMP bid-management discipline into the skills the agents consume. Same architecture, same agents — different methodology, materially different proposal.</li>
+    </ol>
+  </div>
+</div>
+
+<main>
+
+<section id="brief">
+  <h2 class="section-title"><span class="num">01</span>The brief</h2>
+  <p class="section-lede">A 60-minute workshop build, modelling how a senior services firm actually runs a deal.</p>
+  <p>
+    Services firms have a structural problem: too many inbound RFPs, too few hours of
+    senior partner time to read them properly. The naive answer — &ldquo;point an LLM at
+    the RFP and ask for a proposal&rdquo; — produces a confident-sounding document that
+    loses to better-prepared competitors.
+  </p>
+  <p>
+    Our brief was to build the architecture that <em>does</em> map to senior practice: a
+    coordinator who orchestrates, specialists who own lanes, and a final deliverable
+    that survives serious scrutiny. The scenario was a synthetic Acme Corp RFP for an
+    enterprise data platform — a deal with real curveballs: a 35% minimum-discount demand,
+    uncapped breach liability, full IP assignment, and a non-negotiable Power BI integration.
+  </p>
+</section>
+
+<section id="architecture">
+  <h2 class="section-title"><span class="num">02</span>The architecture</h2>
+  <p class="section-lede">Coordinator + Specialists + Skills. Each box is a real agent on the Managed Agents platform.</p>
+
+  <div class="arch">
+    <div class="coord">
+      Senior Partner — Deal Desk Lead
+      <small>Coordinator agent · multiagent.coordinator config</small>
+    </div>
+    <div class="lines">│</div>
+    <div class="lines">┌─────────────┬──────────────┬─────────────┐</div>
+    <div class="lines">│ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; │ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;│ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; │</div>
+    <div class="specialists">
+      <div class="spec">Pricing<br><small>pricing-playbook</small></div>
+      <div class="spec">Legal<br><small>legal-checklist</small></div>
+      <div class="spec">Technical Fit<br><small>solution-architect</small></div>
+      <div class="spec">Competitive<br><small>competitive-intel</small></div>
+    </div>
+    <p class="caption">
+      Four specialists run in parallel. Each consults its own domain skill. The coordinator
+      (now also carrying a <code class="inline">win-strategy</code> skill) sequences the work
+      and assembles the final document.
+    </p>
+  </div>
+
+  <p>
+    The pattern is deliberately mundane: it is exactly how a partner-led deal desk
+    runs offline. A senior orchestrator reads the brief, dispatches to four specialists
+    in parallel, synthesises their work, and signs the deliverable. The whole point of
+    the architecture is that it makes the AI behave the way the human practice
+    already does — including the parts of that practice that produce <em>winning</em>
+    documents rather than merely complete ones.
+  </p>
+</section>
+
+<section id="run1">
+  <h2 class="section-title"><span class="num">03</span>Run 1 — a document, but not a winning one</h2>
+  <p class="section-lede">The first build worked technically. Then we read what it produced.</p>
+
+  <p>
+    With everything wired up, we sent the Acme RFP through the swarm. The events stream
+    behaved exactly as designed: four parallel <code class="inline">session.thread_created</code>
+    events, four specialists working concurrently, four replies returning to the coordinator,
+    a python-docx call to build the file, a downloaded
+    <code class="inline">BTS-Synthetic_Proposal_Acme_Corp.docx</code> in the outputs folder.
+    Total elapsed time: under two minutes.
+  </p>
+  <p>
+    Then we opened the document. It was complete. It was well-structured. It would
+    have lost the deal.
+  </p>
+  <p>
+    Specifically, every section was a <strong>fact-dump</strong>: the pricing section recited
+    discount bands; the legal section listed counter-positions in deal-desk voice
+    (&ldquo;BLOCKER&rdquo;, &ldquo;we will not accept&rdquo;); the technical section paraded
+    capabilities; the competitive section produced battlecards. There was no win strategy
+    threading the document, no persona-tailored executive summary, no ghosting, no
+    customer-language discipline, and no specific call to action. It read like a vendor
+    talking about itself.
+  </p>
+
+  <blockquote class="pull">
+    The capability matrix is not the proposal. The win themes are.
+    <cite>— APMP first principle</cite>
+  </blockquote>
+</section>
+
+<section id="diagnosis">
+  <h2 class="section-title"><span class="num">04</span>The diagnosis</h2>
+  <p class="section-lede">AI inherits the discipline you put in front of it. We had given it none.</p>
+
+  <p>
+    It would have been easy to blame the model. The actual root cause was structural:
+    the <strong>skills</strong> we had handed the specialists were internal artifacts —
+    pricing rule-tables, legal blocker-lists, competitor battlecards. They were
+    excellent at producing a deal-desk position. They had nothing to say about how
+    to write a customer-facing bid.
+  </p>
+  <p>
+    The coordinator&rsquo;s system prompt told it to &ldquo;synthesise the specialist
+    outputs into a proposal&rdquo;. Without an explicit win-strategy step, the
+    coordinator did exactly that — assembled the specialist outputs end-to-end,
+    in their internal voices, with no recurring argument. The output was the sum of
+    the inputs. Generic in, generic out.
+  </p>
+  <p>
+    Once we framed the problem that way, the fix was obvious. We didn&rsquo;t need new
+    agents, new tools, or new orchestration. We needed the skills layer to carry the
+    bid-management methodology that a qualified APMP capture lead carries in their
+    head.
+  </p>
+</section>
+
+<section id="uplift">
+  <h2 class="section-title"><span class="num">05</span>The APMP uplift</h2>
+  <p class="section-lede">Five skills, two prompt rewrites, one orchestration change. Same agents, same architecture.</p>
+
+  <p>The uplift had three layers:</p>
+
+  <h3>Rewrote the three existing skills to APMP standard</h3>
+  <div class="skill-grid">
+    <div class="skill">
+      <h4>pricing-playbook <span class="tag">Rewritten</span></h4>
+      <p>Kept the internal rule-tables. Added Price-to-Win discipline, anchor-on-TCO framing, value-anchor library, give/get choreography, BAFO posture, and an explicit play for refusing the 35% discount demand without saying no. Now produces both a deal-desk position <em>and</em> a customer-facing commercial narrative.</p>
+    </div>
+    <div class="skill">
+      <h4>legal-checklist <span class="tag">Rewritten</span></h4>
+      <p>Kept the redline checklist. Added a customer-facing risk-reframe library: every BLOCKER paired with the language that frames our counter-position as Acme being <em>better-protected</em> than they drafted. Doctrine: we sell peace of mind, not legalese.</p>
+    </div>
+    <div class="skill">
+      <h4>competitive-intel <span class="tag">Rewritten</span></h4>
+      <p>Kept the battlecards. Added the discriminator framework (customer-cares × we-have × they-don&rsquo;t), a ghosting voice library (six patterns), win-theme alignment, and a reference-deployment guide (which past win supports which message).</p>
+    </div>
+  </div>
+
+  <h3>Added two new skills</h3>
+  <div class="skill-grid">
+    <div class="skill new">
+      <h4>win-strategy <span class="tag">New · coordinator</span></h4>
+      <p>The APMP heart. Hot-button analysis, persona mapping, win-theme construction (max five, each = hot button × discriminator × proof), message map, persona-tailored executive summary template, action-caption discipline, ghosting voice, and a 10-question colour-team quality gate before the document is finalised.</p>
+    </div>
+    <div class="skill new">
+      <h4>solution-architect <span class="tag">New · technical fit</span></h4>
+      <p>The Technical Fit specialist previously had no skill at all. Now it has one teaching capability-to-outcome translation, the NPI doctrine for honest gap handling (name → reframe → mitigate → prove), architecture-as-story narrative, phased implementation patterns, and customer-facing risk registers.</p>
+    </div>
+  </div>
+
+  <h3>Rewired the prompts</h3>
+  <p>
+    The coordinator&rsquo;s system prompt was rewritten to invoke the
+    <code class="inline">win-strategy</code> skill <em>before</em> any specialist delegation,
+    to brief the specialists <em>with</em> the win themes (not just the RFP), and to synthesise
+    against the message map rather than the raw specialist outputs. Each specialist&rsquo;s
+    prompt was rewritten to require two outputs: an internal artifact in their usual format,
+    <em>and</em> a customer-facing narrative block aligned to the assigned win themes.
+  </p>
+</section>
+
+<section id="theheart">
+  <h2 class="section-title"><span class="num">06</span>The bid director&rsquo;s sequence</h2>
+  <p class="section-lede">What the coordinator now does, every time, before producing a document.</p>
+
+  <ol class="steps">
+    <li><strong>Hot-button &amp; hidden-need analysis.</strong> What the customer explicitly says they need, and what the RFP reveals between the lines (career protection, procurement defensibility, fear of past pain).</li>
+    <li><strong>Persona map.</strong> Who reads each section. What they need to defend. What they fear. What tone they respond to.</li>
+    <li><strong>Win themes.</strong> Three to five. Each constructed as <em>hot button × discriminator × proof</em>. Each must survive the &ldquo;so what?&rdquo; and &ldquo;who else?&rdquo; tests.</li>
+    <li><strong>Message map.</strong> Which theme owns which section. Discriminators are seeded across sections, not siloed.</li>
+    <li><strong>Specialist briefs.</strong> Each specialist receives the win themes, the persona map, and a specific output spec — not just the RFP.</li>
+    <li><strong>Synthesis to the map.</strong> The proposal is built against the message map, not stitched from raw specialist outputs.</li>
+    <li><strong>Colour-team quality gate.</strong> Ten questions answered &ldquo;yes&rdquo; before the document is finalised: win themes stateable in one sentence, ghosting present, NPI handled, &ldquo;you&rdquo; leads paragraphs, action captions on visuals, specific call to action.</li>
+    <li><strong>Document.</strong> Branded Word file in the required structure.</li>
+  </ol>
+
+  <p>
+    The win-theme construction is the single most leveraged step. Every theme is
+    written to a formula the coordinator can verify itself against:
+  </p>
+
+  <pre class="snippet"><span class="muted"># Win theme construction formula</span>
+<span class="accent">WIN THEME</span> = HOT BUTTON  ×  DISCRIMINATOR  ×  PROOF
+            (customer-care)  (we-do, they-don&rsquo;t)  (named evidence)
+
+<span class="muted"># Worked example, generated on the Acme run:</span>
+&ldquo;Because Acme has 600 Power BI users who cannot be retrained, and a
+ 2027 deadline to retire Teradata, Acme needs an analytics layer that
+ drops underneath the existing Power BI estate without a forklift.
+ Our dedicated Power BI DirectQuery adapter &mdash; the same architecture
+ Initech Sensors chose over Microsoft Fabric in 2025 &mdash; delivers that
+ without locking Acme back into a single vendor.&rdquo;</pre>
+
+  <p>
+    Notice the three legs: a hot button quoted in the customer&rsquo;s own language
+    (&ldquo;600 Power BI users&rdquo;, &ldquo;2027&rdquo;), a discriminator specific enough to
+    be defensible (&ldquo;dedicated DirectQuery adapter&rdquo;, not &ldquo;great BI&rdquo;),
+    and a named proof point (&ldquo;Initech Sensors&rdquo;, not &ldquo;a Fortune 500
+    customer&rdquo;). Drop any leg and the theme collapses to a marketing line.
+  </p>
+</section>
+
+<section id="run2">
+  <h2 class="section-title"><span class="num">07</span>Run 2 — APMP-grade output</h2>
+  <p class="section-lede">Same RFP, same agents, same architecture. Materially different document.</p>
+
+  <p>
+    With the new skills in place, we re-ran the swarm. The coordinator&rsquo;s first
+    action was no longer to delegate. It was to produce a win-strategy brief — hot
+    buttons with RFP-section citations, hidden needs surfaced, persona map, five
+    themes, message map, NPI items flagged — before any specialist was contacted.
+    Then it briefed each specialist <em>with</em> the brief, in parallel.
+  </p>
+  <p>
+    During synthesis, the coordinator also did real editorial work: when the
+    Competitive Intel specialist overclaimed sub-100ms latency in its draft, the
+    coordinator caught it and rewrote that section to preserve the NPI integrity of
+    the gap-disclosure elsewhere in the bid. Before producing the document, the
+    coordinator ran itself through the 10-question colour-team gate and logged the
+    pass.
+  </p>
+
+  <table class="compare">
+    <thead>
+      <tr>
+        <th>Dimension</th>
+        <th>Run 1 — undifferentiated</th>
+        <th>Run 2 — APMP-grade</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="label">Win themes</td>
+        <td class="v1">None &mdash; sections were fact-dumps</td>
+        <td class="v2">Five, each constructed to the formula, threading every section</td>
+      </tr>
+      <tr>
+        <td class="label">Executive summary</td>
+        <td class="v1">3-bullet generic summary</td>
+        <td class="v2">Persona-tailored You-Need-Solution-Proof-Why-Action structure, one page</td>
+      </tr>
+      <tr>
+        <td class="label">Competitor handling</td>
+        <td class="v1">Battlecards repeated verbatim, competitors named</td>
+        <td class="v2">Four competitor categories ghosted by pattern; no competitor named in customer prose</td>
+      </tr>
+      <tr>
+        <td class="label">Gap disclosure</td>
+        <td class="v1">Buried as &ldquo;partial fit&rdquo; in a matrix</td>
+        <td class="v2">NPI doctrine: sub-100ms gap named, reframed, mitigated, proven (Initech precedent)</td>
+      </tr>
+      <tr>
+        <td class="label">Voice</td>
+        <td class="v1">&ldquo;We have&hellip;&rdquo;, &ldquo;Our&hellip;&rdquo;, &ldquo;BTS-Synthetic&hellip;&rdquo;</td>
+        <td class="v2">&ldquo;You / your / Acme&rdquo; leads paragraphs; we follow</td>
+      </tr>
+      <tr>
+        <td class="label">Discount handling</td>
+        <td class="v1">Maths arguing against 35%</td>
+        <td class="v2">22% headline / 31.5% effective; reframed to 5-yr TCO; defensible scoring trail</td>
+      </tr>
+      <tr>
+        <td class="label">Call to action</td>
+        <td class="v1">&ldquo;We look forward to discussing further.&rdquo;</td>
+        <td class="v2">Sarah Chen, working session by 2026-06-02, decision by 2026-05-29</td>
+      </tr>
+      <tr>
+        <td class="label">Document size</td>
+        <td class="v1">46 KB, ~6 pages, 8 tables</td>
+        <td class="v2">57 KB, ~11 sections, 18 tables, branded cover</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    Both documents are kept side-by-side in the project&rsquo;s
+    <code class="inline">outputs/</code> folder. The size delta isn&rsquo;t the point — a
+    longer proposal isn&rsquo;t a better one. The point is that every paragraph in Run 2
+    carries an argument that one of the five themes makes; in Run 1, paragraphs
+    carried facts.
+  </p>
+</section>
+
+<section id="pattern">
+  <h2 class="section-title"><span class="num">08</span>The general pattern</h2>
+  <p class="section-lede">This isn&rsquo;t just for bid responses.</p>
+
+  <p>
+    The build pattern generalises to any structured services-firm output where a
+    senior orchestrator needs to assemble specialist contributions into a coherent
+    deliverable. The interesting ones:
+  </p>
+  <ul>
+    <li><strong>M&amp;A diligence memos.</strong> A coordinator routing to financial, legal, tech-stack and people-culture specialists, with a methodology skill that drives the risk-and-recommendation discipline.</li>
+    <li><strong>Compliance and regulatory reviews.</strong> Coordinator + control-framework specialists + a methodology skill that drives evidence-citation discipline.</li>
+    <li><strong>Strategic onboarding plans.</strong> Coordinator + functional specialists + a methodology skill that drives day-1-readiness discipline.</li>
+    <li><strong>Technical due diligence.</strong> Coordinator + architecture / security / code-quality / ops specialists + a methodology skill that drives the buyer&rsquo;s investment thesis.</li>
+  </ul>
+  <p>
+    In each case the constant is the same: a structured methodology in the skills
+    layer, parallel specialists, and a senior-practice orchestrator that knows the
+    trade and the customer.
+  </p>
+
+  <blockquote class="pull">
+    Generic AI loses bids. Structured AI wins them. The skills layer is where firm-specific expertise lives — defensible, reusable, evolvable.
+  </blockquote>
+</section>
+
+<section id="lessons">
+  <h2 class="section-title"><span class="num">09</span>What we&rsquo;d carry forward</h2>
+  <p class="section-lede">The non-obvious lessons from the build.</p>
+
+  <p>
+    <strong>The skills layer is the leverage point.</strong> The agents, the orchestration, the
+    model choice — all of these matter at the margin. The skills are where the
+    firm&rsquo;s methodology lives. Investing carefully there pays back across every
+    deal the system handles.
+  </p>
+  <p>
+    <strong>Internal artifacts make terrible customer-facing prose.</strong> Every domain
+    we touched had this problem. The deal-desk rule-tables, the legal blocker lists,
+    the engineering capability matrices — all critical for internal alignment, all
+    poison if they survive into a customer document. The skills now explicitly carry
+    two layers: internal and customer-facing.
+  </p>
+  <p>
+    <strong>Coordinators must be bid directors, not just dispatchers.</strong> A coordinator
+    that simply parallelises and synthesises produces a Frankenstein. A coordinator
+    that runs a deliberate strategy step <em>before</em> delegating, and synthesises to
+    a message map <em>after</em>, produces a coherent argument.
+  </p>
+  <p>
+    <strong>Quality gates earn their cost.</strong> The 10-question colour-team gate adds
+    perhaps thirty seconds to the run. It catches the things that would have lost
+    the deal: capability-dump executive summaries, &ldquo;we&rdquo;-walls, hidden gaps,
+    missing calls to action.
+  </p>
+</section>
+
+<section id="next">
+  <h2 class="section-title"><span class="num">10</span>What&rsquo;s next</h2>
+  <p class="section-lede">The natural extensions, in priority order.</p>
+
+  <ul>
+    <li><strong>Critic sub-agent.</strong> A fifth agent that reviews the coordinator&rsquo;s draft against the colour-team questions and returns objections before the document is finalised. Adds a structural Red-team review without slowing the path-of-least-resistance run.</li>
+    <li><strong>Firm-voice skill.</strong> Every services firm has a recognisable house style. Codify it as a skill the coordinator carries, and apply it at synthesis time.</li>
+    <li><strong>Memory across deals.</strong> The coordinator remembers past wins and re-uses the right ones &mdash; not just from <code class="inline">past-wins.json</code> but from real CRM data via an MCP server.</li>
+    <li><strong>Synthetic MCP for past wins.</strong> Wire up a fake CRM (or a real one) and let the pricing specialist query it during the bid rather than reading a static file.</li>
+  </ul>
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <p>
+      <strong>Stack:</strong>
+      Claude Managed Agents (<code>multiagent.coordinator</code>) ·
+      Custom Skills API (<code>files_from_dir</code>, versioned) ·
+      Cloud Environment (unrestricted networking) ·
+      <code>python-docx</code> for deliverable assembly.
+    </p>
+    <p>
+      <strong>Five skills · two new agents&rsquo; prompts · one orchestration prompt.</strong>
+      Same architecture as v1. Materially different bid.
+    </p>
+    <p style="margin-top: 24px; color: var(--slate-300);">
+      Partner Basecamp 2026 · Specialist Swarm
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

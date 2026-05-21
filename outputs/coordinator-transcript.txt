@@ -1,0 +1,78 @@
+I have the win-strategy skill in hand. No docx skill is mounted, so I'll produce the final document as a branded Word doc via python-docx. Let me lock down the Win Strategy Brief before delegating.
+
+## Win Strategy Brief (Senior Partner — internal only)
+
+**Hot buttons (explicit)**: 600 Power BI users (§2.3, "non-negotiable"); 5-year fixed price with no escalators (§3.1); 35% discount minimum (§3.3); 99.99% uptime + instant termination (§4.3); uncapped breach liability (§4.1); all IP to Acme (§4.4); EU residency (§2.3); Teradata sunset by 2027 (§1); peak 80k events/sec (§2.2); open formats Parquet/Delta/Iceberg (§2.3).
+
+**Hidden needs**: (a) Marcus Webb (CDO) is on the hook for the Teradata 2027 deadline — career risk; (b) Sarah Chen (Procurement) needs a defensible scoring trail with four bidders on the table; (c) the open-formats clause is a lock-in tell — they fear getting hostage'd by Fabric or Snowflake; (d) "patchwork of warehouses" reveals past pain from fragmentation; (e) 35% headline discount is procurement theatre — the real CFO ask is 5-yr cost certainty.
+
+**Evaluation weighting**: 65% of the score sits in Functional fit (30%) + Commercial (25%) + TCO (20%). That's our axis.
+
+**Persona map**: Marcus Webb (CDO, peer-to-peer architectural tone, fears forklift and lock-in) → reads whole technical + exec summary. Sarah Chen (VP Procurement, defensible-numeric tone, fears CFO challenge on discount) → exec summary + commercial + contract + matrix. Acme CFO (inferred, fears compute creep) → exec summary only + 5-yr TCO line. CEO/board (inferred) → exec summary opener + CTA. Acme legal (inferred) → contract approach + matrix.
+
+**Five win themes**:
+1. **Power BI continuity without lock-in** — DirectQuery adapter on open Delta/Iceberg → proven at Initech vs Fabric (2025).
+2. **TCO certainty for five years, not surprise in year two** — fixed annualised pricing + compute/storage decouple → proven at Globex vs Snowflake (2025).
+3. **A phased Teradata exit, not a forklift** — lakehouse overlay underneath Power BI → proven at Stark legacy-infrastructure migration (2026).
+4. **Sovereignty without a US-cloud bet** — per-table EU pin + BYO Azure storage + self-host option → proven at Stark sovereign deployment (2026).
+5. **A contract both sides can sign** — precedent-backed counter-positions (cyber-insured liability stack, IP licence-back, pre-vetted subprocessor pool) → proven at Stark legal in Feb 2026.
+
+**Message map**: WT1+WT4 lead Why-us. WT2 owns Commercial. WT5 owns Contract. WT3 owns Implementation. WT1+WT3+WT4 own Technical. All five compress into the exec summary.
+
+**NPI gap to disclose upfront**: sub-100ms streaming latency (we hit 250ms-1s; reframe to physical event horizon for predictive maintenance + name Initech hybrid pattern). Also 99.95% standard vs 99.99% requested (Alternative offered — custom architecture).
+
+Now briefing all four specialists in parallel with the strategy.All four specialists are running in parallel. While they work, let me prep the output infrastructure.Good — python-docx is available. Now waiting for the four specialists.Legal Reviewer delivered. Excellent — strong precedent-anchoring on Stark, stacked liability structure with uninsurability framing, and clean customer-de-risking voice on every counter. Holding for the other three specialists.Pricing Specialist delivered. Strong work — refused the 35% discount race, anchored on TCO, packaged effective 31.5% via credits + Success, named Globex precedent in the ghosted comparison, kept the headline at $4.91M and put it at the bottom. The 5-year fixed table is exactly what the CFO needs. Holding for Technical Fit and Competitive Intel.Competitive Intel delivered. Strong per-competitor SWOT with proof-anchored attack lines, ghosted prose discipline, and the NPI honesty section landed. One thing I'll quietly correct in synthesis: their customer-facing draft claims "sub-100ms refresh" for Initech and Acme, which conflicts with our actual capability (250ms–1s standard, with in-memory cache pattern for the interactive subset). I'll re-voice that honestly in the proposal to keep the NPI move credible.
+
+Holding for Technical Fit.All four specialists have delivered. Let me pull the technical narrative from disk.All four specialists have delivered. Time for Step 3 (synthesis to message map, not specialist outputs) and Step 7 (quality gate).
+
+**Quality-gate pass before building**:
+- One thing to fix in synthesis: the competitive-intel narrative claims "sub-100ms refresh" for Initech and as a standard outcome for Acme — that contradicts our actual 250ms–1s capability and undermines the NPI honesty section. I will re-voice that section to match the technical specialist's honest position (sub-100ms only via the in-memory cache pattern for the interactive subset; standard streaming is 250ms–1s).
+- Customer-voice: I'll re-anchor every paragraph opener on Acme/your/you.
+- CTA: specific person (Sarah Chen), specific date (working-session within 7 days of submission, contract draft by award date 2026-06-30), specific decision.
+- Ghosting: all four competitors characterised by category only in customer prose.
+
+Now building the branded Word document.Final colour-team quality-gate pass before handover:
+
+| # | Check | Result |
+|---|---|---|
+| 1 | Five win themes stateable in one sentence each | ✓ |
+| 2 | Hot buttons named in customer language in exec summary | ✓ — Power BI/600 users, Teradata 2027, 280 TB / 12 TB-mo, EU residency, 5-yr fixed price, 75% scoring axis |
+| 3 | Each section speaks to its primary reader | ✓ — CDO owns §4–6; Procurement/CFO own §7–9; Legal owns §8 + matrix |
+| 4 | ≥3 discriminators stated with named proof | ✓ — DirectQuery/Initech, compute-decouple/Globex, per-table residency/Stark |
+| 5 | Each competitor category ghosted at least once | ✓ — "licence-bundled offers", "compute-metered platforms", "warehouse-first platforms", "regional alternatives", "single-hyperscaler-native platforms" — none named |
+| 6 | Compliance matrix complete, every shall/must mapped | ✓ — 24 rows |
+| 7 | NPI on known gaps before customer finds them | ✓ — sub-100ms in §4 honesty section + §5; 99.95%/99.99% in §5 + §8.3 + matrix |
+| 8 | "You/your/Acme" leads paragraphs, not "we/our" | ✓ — every customer-facing section opener |
+| 9 | Every visual has a benefit caption | ✓ — Figure 1 and Tables 1–5 |
+| 10 | Specific decision, person, date in CTA | ✓ — Sarah Chen, working session by 2026-06-02, decision by 2026-05-29, MSA lodged by award 2026-06-30 |
+
+Passed. Document delivered.
+
+---
+
+## Deliverable
+
+**File**: `/mnt/session/outputs/BTS-Synthetic_Proposal_to_Acme_Corp.docx`
+
+**Document map (11 sections, 18 tables, branded navy/amber/slate palette):**
+
+1. **Branded cover** — Acme + RFP reference + 2026-05-26 submission
+2. **Executive summary** — persona-tailored (CDO + Procurement + CFO), structured You-Need-Solution-Proof-Why-Action
+3. **Acme's need — as Acme described it** — hot buttons in customer language with RFP citations
+4. **Why Acme needs an open-format lakehouse now** — category framing, sets up themes
+5. **Why BTS-Synthetic — the Acme-specific case** — three discriminators with named proof; honesty section on sub-100ms
+6. **Technical solution** — Power BI day-one, real-time ingest, sovereignty, phased Teradata exit, architecture, workload fit matrix
+7. **Implementation plan** — phases + risk register, each with named owners
+8. **Commercial proposal** — TCO lens, 5-yr schedule, ghosted comparison, headline last at $4.91M
+9. **Contract approach** — seven counter-positions, each framed as Acme-de-risking, Stark precedent named
+10. **Compliance matrix** — 24 rows, colour-coded status (Full / Alternative / Counter-position)
+11. **References** — Initech, Globex, Stark named with the specific claim each supports
+12. **Next steps** — three specific actions, named attendees, dated, one decision request to Sarah Chen by 2026-05-29
+
+**Key strategic moves taken in synthesis (not in the raw specialist outputs):**
+
+- **Re-voiced the competitive-intel "sub-100ms refresh" claim** that would have undermined the NPI honesty section — kept sub-100ms strictly as the cache-pattern subset, not the headline.
+- **Promoted the Stark IP licence-back precedent** into the executive summary as a named proof point so procurement reads it before legal.
+- **Anchored the 22% headline / 31.5% effective discount** to the spirit of §3.3 in the compliance matrix, so Sarah Chen has a defensible scoring trail without us racing the Pied Piper loss.
+- **Ghosted four competitor categories** with distinct patterns; no competitor named anywhere in customer-facing prose.
+- **CTA constructed against the real award date** (2026-06-30) with a 7-day first commitment and a defined single decision the buyer can say yes to.
